@@ -17,6 +17,7 @@ while True:
             countScripts = len(scripts)
 
             print("All items are: " + str(scripts))
+            print("The first script is: " + str(scripts[1]))
             print("Below are the items")
             for list in scripts:
                 #print("Item is: " + list)

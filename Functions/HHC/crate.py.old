@@ -1,0 +1,493 @@
+import requests
+
+import urllib.request # Needed for the json request at the end
+
+from selenium import webdriver # For selenium        
+
+import json # to properly submit json requests
+
+import os # To perform bash commands
+
+import subprocess # To perform bash commands
+
+import pickle # I forget why I have this..
+
+import time # For Sleep
+
+from selenium.webdriver.common.keys import Keys # To use Key commands within Selenium
+
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities # Needed in order to get Browser logs
+
+
+
+
+#################################
+
+## Automate Objective 11 for Holiday Hack Challenge 2019 - KringleCon 2 - Turtle Doves
+
+## Written by Eric Guillen
+
+#################################
+
+
+## TODO: Permanently set chromedriver to path
+
+## export PATH=$PATH:/Users/canonzalman/Downloads
+
+## create functions and utilize full python and not bash
+
+
+# Creating an instance webdriver
+
+# Will have to remove firefox and switch to chrome
+
+# These allow me to access the console log (get_log('browser')
+
+d = DesiredCapabilities.CHROME
+
+d['goog:loggingPrefs'] = { 'browser':'ALL' }
+
+browser = webdriver.Chrome(desired_capabilities=d)
+
+browser.get('https://crate.elfu.org')
+
+browserConsole=browser.get_log('browser')
+
+
+# Save HTML Source to variable
+
+html_source = browser.page_source
+
+
+# Write source to "variable.txt" for access with bash (os.system)
+
+f = open( 'variable.txt', 'w' )
+
+f.write(html_source)
+
+f.close()
+
+
+
+# This is done to parse variable.txt a bit better with TR
+
+# Move variable to testTR.txt
+
+bashCommand = 'cat variable.txt | tr " " "\n" > testTR.txt'
+
+os.system(bashCommand)
+
+
+
+print('[*] Extracting all values for each lock...')
+
+#################
+
+# Extract Lock 1 .. see below
+
+#################
+
+
+#################
+
+# Extract Lock 2
+
+#################
+
+Lock2='''cat testTR.txt | grep "<strong>" | awk -F '[> ]' '{print $3}' | cut -d'<' -f1 | cut -d"'" -f1 > Lock2.txt'''
+
+os.system(Lock2)
+
+
+#################
+
+# Extract Lock 3 .. see below
+
+#################
+
+
+#################
+
+# Extract Lock 4 .. see below
+
+#################
+
+
+#################
+
+# Extract Lock 5
+
+#################
+
+Lock5='''head -1 variable.txt | awk -F '[< ]' '{print $6}' | cut -d'e' -f2 | sed '/^$/d;s/[[:blank:]]//g' > Lock5.txt'''
+
+os.system(Lock5)
+
+
+#################
+
+# Extract Lock 6 - Just putting them in the order that is found in the css page..
+
+#################
+
+ZADFCDIV='''grep ZADFCDIV testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 > Lock6a.txt'''
+
+GMSXHBQH='''grep GMSXHBQH testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 >> Lock6a.txt'''
+
+RPSMZXMY='''grep RPSMZXMY testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 >> Lock6a.txt'''
+
+IDOIJIKV='''grep IDOIJIKV testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 >> Lock6a.txt'''
+
+KXTBRPTJ='''grep KXTBRPTJ testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 >> Lock6a.txt'''
+
+AJGXPXJV='''grep AJGXPXJV testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 >> Lock6a.txt'''
+
+ZWYRBISO='''grep ZWYRBISO testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 >> Lock6a.txt'''
+
+KPVVBGSG='''grep KPVVBGSG testTR.txt | awk -F '[> ]' '{print $2}' | cut -d'<' -f1 >> Lock6a.txt'''
+
+
+os.system(ZADFCDIV)
+
+os.system(GMSXHBQH)
+
+os.system(RPSMZXMY)
+
+os.system(IDOIJIKV)
+
+os.system(KXTBRPTJ)
+
+os.system(AJGXPXJV)
+
+os.system(ZWYRBISO)
+
+os.system(KPVVBGSG)
+
+os.system('''cat Lock6a.txt | tr '\n' ' ' | tr -d '[:blank:]' > Lock6.txt''')
+
+
+#################
+
+# Extract Lock 7
+
+#################
+
+Lock7='''head -1 variable.txt | awk -F '[: ]' '{print $14}' | cut -d"'" -f2 > Lock7.txt'''
+
+os.system(Lock7)
+
+
+#################
+
+# Extract Lock 8 .. not needed (hardcoded VERONICA)
+
+#################
+
+
+#################
+
+# Extract Lock 9
+
+#################
+
+Lock9a='''head -1 variable.txt | awk -F '[" ]' '{print $8}' | cut -d"'" -f2 | cut -d'/' -f3'''
+
+os.system(Lock9a)
+
+# Run Lock9a and put into variable
+
+proc = subprocess.Popen([Lock9a], stdout=subprocess.PIPE, shell=True)
+
+(out, err) = proc.communicate()
+
+a=out.decode("utf-8")
+
+seed=(a.strip())
+
+#print("Seed is: " + seed)
+
+# Combine string to URL
+
+b=("https://crate.elfu.org/css/styles.css/" + a.strip())
+
+# Write URL to file
+
+f = open( 'Lock9c.txt', 'w' )
+
+f.write(b)
+
+f.close()
+
+Lock9curl='''for URL in `cat Lock9c.txt`; do curl -L -s $URL > Lock9-curl.txt; done'''
+
+os.system(Lock9curl)
+
+Lock9='''cat Lock9-curl.txt | grep -A 1 "chakra" | grep content | cut -d"'" -f2  | tr '\n' ' ' | tr -d '[:blank:]' > Lock9py.txt'''
+
+os.system(Lock9)
+
+
+#################
+
+# Extract Lock 10 .. not needed (hardcoded
+
+#################
+
+
+#################
+
+## Lock 3
+
+#################
+
+# Extract Lock 3 - this is done by using tesseract to try to turn a png to text
+
+c=("https://crate.elfu.org/images/" + a.strip() + ".png")
+
+f = open ('Lock3-image.txt', 'w' )
+
+f.write(c)
+
+f.close()
+
+Lock3='''for URL in `cat Lock3-image.txt`; do curl -L -s $URL > Lock3-image.png; done'''
+
+os.system(Lock3)
+
+Lock3text='''tesseract Lock3-image.png Lock3-image-out'''
+
+os.system(Lock3text)
+
+
+#################
+
+# Extract Lock 4 - This is using the browser script to pull Local storage
+
+#################
+
+LOCK4=browser.execute_script("return localStorage.getItem('🛢️🛢️🛢️')")
+
+f = open ('Lock4.txt', 'w' )
+
+f.write(LOCK4)
+
+f.close()
+
+
+#################
+
+# LOCK 1 - This is done by using the browser log.. and extracting it
+
+#################
+
+z=(' '.join(map(str, browserConsole)))
+
+f = open ('console.txt', 'w')
+
+f.write(z)
+
+f.close()
+
+Lock1='''cat console.txt | tr ' ' '\n' | grep "%c" | head -1 | cut -d'c' -f3 > Lock1.txt'''
+
+os.system(Lock1)
+
+
+print('[+] All lock values found!')
+
+'''
+
+Putting all locks into variables
+
+'''
+
+# Lock 1
+
+a='''cat Lock1.txt | tr -d "[:space:]" > Lock1-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock1-fixed.txt', 'r')
+
+LOCK1 = f.read()
+
+f.close()
+
+
+# Lock 2
+
+a='''cat Lock2.txt | tr -d "[:space:]" > Lock2-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock2-fixed.txt', 'r')
+
+LOCK2 = f.read()
+
+f.close()
+
+
+# Lock 3
+
+a='''cat Lock3-image-out.txt | tr -d "[:space:]" > Lock3-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock3-fixed.txt', 'r')
+
+LOCK3 = f.read()
+
+f.close()
+
+
+# Lock 4
+
+a='''cat Lock4.txt | tr -d "[:space:]" > Lock4-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock4-fixed.txt' , 'r')
+
+LOCK4 = f.read()
+
+f.close()
+
+
+# Lock 5
+
+a='''cat Lock5.txt | tr -d "[:space:]" > Lock5-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock5-fixed.txt', 'r')
+
+LOCK5 = f.read()
+
+f.close()
+
+
+# Lock 6
+
+a='''cat Lock6.txt | tr -d "[:space:]" > Lock6-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock6-fixed.txt', 'r')
+
+LOCK6 = f.read()
+
+f.close()
+
+
+# Lock 7
+
+a='''cat Lock7.txt | tr -d "[:space:]" > Lock7-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock7-fixed.txt' , 'r')
+
+LOCK7 = f.read()
+
+f.close()
+
+
+# Lock 8
+
+a='''cat Lock8.txt | tr -d "[:space:]" > Lock8-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock8-fixed.txt', 'r')
+
+LOCK8 = f.read()
+
+f.close()
+
+
+# Lock 9
+
+a='''cat Lock9py.txt | tr -d "[:space:]" > Lock9-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock9-fixed.txt', 'r')
+
+LOCK9 = f.read()
+
+f.close()
+
+
+# Lock 10
+
+a='''cat Lock10.txt | tr -d "[:space:]" > Lock10-fixed.txt'''
+
+os.system(a)
+
+f = open ('Lock10-fixed.txt' ,'r')
+
+LOCK10 = f.read()
+
+f.close()
+
+
+print('#####################')
+
+print('Lock 1 is ' + LOCK1)
+
+print('Lock 2 is ' + LOCK2)
+
+print('Lock 3 is ' + LOCK3)
+
+print('Lock 4 is ' + LOCK4)
+
+print('Lock 5 is ' + LOCK5)
+
+print('Lock 6 is ' + LOCK6)
+
+print('Lock 7 is ' + LOCK7)
+
+print('Lock 8 is ' + LOCK8)
+
+print('Lock 9 is ' + LOCK9)
+
+print('Lock 10 is ' + LOCK10)
+
+print('#####################')
+
+#print('Send Each Lock')
+
+
+# FINAL SUBMISSION
+
+data={"seed":seed, "codes":{"1":LOCK1, "2":LOCK2, "3":LOCK3, "4":LOCK4, "5":LOCK5, "6":LOCK6, "7":LOCK7, "8":LOCK8, "9":LOCK9, "10":LOCK10}}
+
+
+myurl = "https://crate.elfu.org/open"
+
+req = urllib.request.Request(myurl)
+
+req.add_header('Content-Type', 'application/json; charset=utf-8')
+
+jsondata = json.dumps(data)
+
+jsondataasbytes = jsondata.encode('utf-8')   # needs to be bytes
+
+req.add_header('Content-Length', len(jsondataasbytes))
+
+#print (jsondataasbytes)
+
+response = urllib.request.urlopen(req, jsondataasbytes)
+
+
+#print(response)
+
+
+# Print Final URL that shows speed of success
+
+print('[+] Final URL is: https://crate.elfu.org/images/scores/' + seed + '.jpg')
+
+
+# Go to success message
+
+browser.get('https://crate.elfu.org/images/scores/' + seed + '.jpg')
